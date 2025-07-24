@@ -88,7 +88,7 @@ jobs:
               echo "Warning: Failed to clean $NGINX_FRONTEND_ROOT. Proceeding with copy."
             }
             echo "Remote directory clean up complete."
-          source: "${{ runner.temp }}/flat_dist_for_transfer/."
+          source: "${{ runner.temp }}/flat_dist_for_transfer/*"
           target: "${{ secrets.VPS_REMOTE_PATH }}"
           overwrite: true
           strip_components: 1
