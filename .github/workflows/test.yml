@@ -65,7 +65,7 @@ jobs:
             rm -rf "${NGINX_FRONTEND_ROOT:?}"/* || {
               echo "Warning: Failed to clean $NGINX_FRONTEND_ROOT. Proceeding with copy."
             }
-            cd "$NGINX_FRONTEND_ROOT""
+            cd "$NGINX_FRONTEND_ROOT"
             cat new.html
             echo "Clean up complete."
           source: "${{ github.workspace }}/dist/."
