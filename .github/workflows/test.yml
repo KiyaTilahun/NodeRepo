@@ -42,7 +42,7 @@ jobs:
       - name: List Files in dist directory
         run: |
           echo "Listing contents of the dist directory:"
-    ls -la ${{ github.workspace }}/dist/
+          ls -la ${{ github.workspace }}/dist/
       - name: Transfer Built Files to Server
         uses: appleboy/ssh-action@master
         with:
