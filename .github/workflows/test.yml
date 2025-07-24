@@ -50,26 +50,6 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           port: ${{ secrets.VPS_PORT }}
           key: ${{ secrets.VPS_SSH }}
-          script: |
-            #!/bin/bash
-            set -e
-
-            NGINX_FRONTEND_ROOT=${{ secrets.VPS_REMOTE_PATH }}
-            BUILD_DIR="dist"
-
-            echo "Starting file transfer and deployment on the server..."
-
-            echo "Preparing Nginx serving directory: $NGINX_FRONTEND_ROOT"
-            mkdir -p "$NGINX_FRONTEND_ROOT" || {
-              echo "Error: Failed to create Nginx root directory."
-              exit 1
-            }
-
-            #echo "Cleaning existing files in $NGINX_FRONTEND_ROOT"
-            #rm -rf "${NGINX_FRONTEND_ROOT:?}"/* || {
-            #  echo "Warning: Failed to clean $NGINX_FRONTEND_ROOT. Proceeding with copy."
-            #}
-            #echo "Clean up complete."
           source: "${{ github.workspace }}/dist/*"
           target: "${{ secrets.VPS_REMOTE_PATH }}"
           overwrite: true 
