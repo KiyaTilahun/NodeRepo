@@ -39,6 +39,10 @@ jobs:
             exit 1 # Fail the workflow if 'dist' is not found
           fi
           echo "Build output directory '$BUILD_OUTPUT_DIR' found. Proceeding."
+      - name: List Files in dist directory
+        run: |
+          echo "Listing contents of the dist directory:"
+    ls -la ${{ github.workspace }}/dist/
       - name: Transfer Built Files to Server
         uses: appleboy/ssh-action@master
         with:
@@ -64,11 +68,6 @@ jobs:
             echo "Cleaning existing files in $NGINX_FRONTEND_ROOT"
             rm -rf "${NGINX_FRONTEND_ROOT:?}"/* || {
               echo "Warning: Failed to clean $NGINX_FRONTEND_ROOT. Proceeding with copy."
-            }
-            cd "$NGINX_FRONTEND_ROOT"
-            mkdir Hello || {
-            echo "Error: Failed to create 'Hello' directory."
-              exit 1
             }
             echo "Clean up complete."
           source: "${{ github.workspace }}/dist/."
