@@ -3,10 +3,10 @@ name: Deploy React/Next.js Project (Pull & Build on Server)
 on:
   pull_request:
     branches:
-      - main
+      - other
   push:
     branches:
-      - main
+      - other
 
 jobs:
   deploy:
