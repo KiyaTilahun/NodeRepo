@@ -29,7 +29,7 @@ jobs:
             # This is the path to your React/Next.js source code repository on the server
             #PROJECT_SOURCE_DIR="/home/kiya/projects/Frontend/FrontEnd/"
             # This is where Nginx expects the built files to be served from
-            NGINX_FRONTEND_ROOT="~/FrontEnd"
+            NGINX_FRONTEND_ROOT=${{secrets.VPS_REMOTE_PATH}}
 
             echo "Starting deployment process on the server..."
 
