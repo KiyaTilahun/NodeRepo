@@ -27,15 +27,15 @@ jobs:
 
             # --- Define paths ---
             # This is the path to your React/Next.js source code repository on the server
-            PROJECT_SOURCE_DIR="/home/kiya/projects/Frontend/FrontEnd/"
+            #PROJECT_SOURCE_DIR="/home/kiya/projects/Frontend/FrontEnd/"
             # This is where Nginx expects the built files to be served from
-            NGINX_FRONTEND_ROOT="/var/www/FrontEnd"
+            NGINX_FRONTEND_ROOT="~/FrontEnd"
 
             echo "Starting deployment process on the server..."
 
             # 1. Navigate to the project directory
             echo "Navigating to project directory: $PROJECT_SOURCE_DIR"
-            cd "$PROJECT_SOURCE_DIR" || {
+            cd "$NGINX_FRONTEND_ROOT" || {
               echo "Error: Unable to change directory to $PROJECT_SOURCE_DIR. Does it exist?"
               exit 1
             }
