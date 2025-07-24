@@ -29,42 +29,22 @@ jobs:
       - name: Build Project
         run: VITE_REACT_APP_PUBLIC_API_URL="add_here_mere" npm run build
 
-      - name: Verify and List Built Files
+      - name: Verify Build Output Directory
         run: |
-          BUILD_SOURCE_DIR="${{ github.workspace }}/dist"
-
-          echo "Verifying build output directory: $BUILD_SOURCE_DIR"
-
-          if [ ! -d "$BUILD_SOURCE_DIR" ]; then
-            echo "Error: Build output directory '$BUILD_SOURCE_DIR' does not exist."
-            echo "Please ensure your build step completes successfully and creates this directory."
-            exit 1
+          BUILD_OUTPUT_DIR="${{ github.workspace }}/dist"
+          if [ ! -d "$BUILD_OUTPUT_DIR" ]; then
+            echo "Error: Build output directory '$BUILD_OUTPUT_DIR' not found!"
+            echo "This usually means 'npm run build' failed or outputted to a different location."
+            ls -al "${{ github.workspace }}" # List contents of workspace for debugging
+            exit 1 # Fail the workflow if 'dist' is not found
           fi
-
-          if [ -z "$(ls -A "$BUILD_SOURCE_DIR")" ]; then
-            echo "Error: Build output directory '$BUILD_SOURCE_DIR' is empty."
-            echo "This indicates that your build step did not produce any files."
-            exit 1
-          fi
-
-          echo "Contents of the build output directory:"
-          ls -la "$BUILD_SOURCE_DIR"/
-
-      - name: Prepare Files for Transfer (Exclude Directories)
+          echo "Build output directory '$BUILD_OUTPUT_DIR' found. Proceeding."
+      - name: List Files in dist directory
         run: |
-          SOURCE_DIR="${{ github.workspace }}/dist"
-          TEMP_TRANSFER_DIR="${{ runner.temp }}/flat_dist_for_transfer"
-
-          mkdir -p "$TEMP_TRANSFER_DIR"
-
-          echo "Copying only files (excluding subdirectories) from '$SOURCE_DIR' to '$TEMP_TRANSFER_DIR'..."
-          find "$SOURCE_DIR" -maxdepth 1 -type f -exec cp {} "$TEMP_TRANSFER_DIR" \;
-
-          echo "Contents of temporary transfer directory (only files):"
-          ls -la "$TEMP_TRANSFER_DIR"/
-
-      - name: Transfer Built Files to Server
-        uses: appleboy/scp-action@master
+          echo "Listing contents of the dist directory:"
+          ls -la ${{ github.workspace }}/dist/
+      - name: Prepare Remote Directory (Clean)
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
@@ -73,6 +53,7 @@ jobs:
           script: |
             #!/bin/bash
             set -e
+
             NGINX_FRONTEND_ROOT=${{ secrets.VPS_REMOTE_PATH }}
 
             echo "Starting remote directory preparation..."
@@ -88,7 +69,15 @@ jobs:
               echo "Warning: Failed to clean $NGINX_FRONTEND_ROOT. Proceeding with copy."
             }
             echo "Remote directory clean up complete."
-          source: "${{ runner.temp }}/flat_dist_for_transfer/*"
+
+      - name: Transfer Built Files to Server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          port: ${{ secrets.VPS_PORT }}
+          key: ${{ secrets.VPS_SSH }}
+          source: "dist/*" # This should match the directory checked above
           target: "${{ secrets.VPS_REMOTE_PATH }}"
           overwrite: true
           strip_components: 1
