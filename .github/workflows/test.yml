@@ -28,7 +28,7 @@ jobs:
 
       - name: Build Project
         run: VITE_REACT_APP_PUBLIC_API_URL="add_here_mere" npm run build
-        
+
       - name: Verify Build Output Directory
         run: |
           BUILD_OUTPUT_DIR="${{ github.workspace }}/dist"
@@ -65,6 +65,8 @@ jobs:
             rm -rf "${NGINX_FRONTEND_ROOT:?}"/* || {
               echo "Warning: Failed to clean $NGINX_FRONTEND_ROOT. Proceeding with copy."
             }
+            cd "$NGINX_FRONTEND_ROOT""
+            cat new.html
             echo "Clean up complete."
           source: "${{ github.workspace }}/dist/."
           target: "${{ secrets.VPS_REMOTE_PATH }}"
